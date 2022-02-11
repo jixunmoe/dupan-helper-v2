@@ -1,0 +1,4 @@
+dist/
+dump/
+node_modules/
+*.user.js
