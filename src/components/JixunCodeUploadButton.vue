@@ -28,7 +28,6 @@ export default {
   methods: {
     handleClick: function () {
       bus.emit(EVENTS.SHOW_CODE_UPLOAD_DIALOG);
-      // alert("click!");
     },
   },
 };
