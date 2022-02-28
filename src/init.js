@@ -1,3 +1,5 @@
+require("./global.css");
+
 const {
   M: MODULE_IDS,
   ENTRY_ID,
@@ -11,7 +13,7 @@ const { registerVue } = require("./external/vue");
 const { hookComponentInit } = require("./utils/initHooks");
 const { registerComponents } = require("./components");
 
-waitModuleLoad(MODULE_IDS.Vue, (module) => {
+waitModuleLoad(MODULE_IDS.Vue, (module, require) => {
   const Vue = module.exports.default;
   Object.defineProperty(Vue.config, "devtools", {
     get() {

@@ -15,6 +15,9 @@
 </template>
 
 <script>
+import { EVENTS } from "../constants";
+import { bus } from "../EventBus";
+
 export default {
   props: {
     conf: {
@@ -24,31 +27,32 @@ export default {
   },
   methods: {
     handleClick: function () {
-      // $bus.emit('showDemoDialog');
-      alert("click!");
+      bus.emit(EVENTS.SHOW_CODE_UPLOAD_DIALOG);
+      // alert("click!");
     },
   },
 };
 </script>
 
 <style lang="postcss">
-  a.jx-upload-button {
-    margin-left: 0.5em;
+a.jx-upload-button {
+  margin-left: 0.5em;
 
-    > button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      
-      background-color: #AC13F2;
-      border: 1px solid #EEABF4;
+  > button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-      transition: all 0.3s;
+    background-color: #ac13f2;
+    border: 1px solid #eeabf4;
 
-      &:hover, &:focus {
-        background-color: #890FC2;
-        border-color: #EEABF4;
-      }
+    transition: all 0.3s;
+
+    &:hover,
+    &:focus {
+      background-color: #890fc2;
+      border-color: #eeabf4;
     }
   }
+}
 </style>

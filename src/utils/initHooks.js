@@ -24,7 +24,7 @@ export function hookMixinPluginContainer(createdFn) {
   return function () {
     const result = createdFn.apply(this, arguments);
     this.previewPlugin.push({
-      compName: "demo-dialog-jixun",
+      compName: "JixunCodeUploadContainer",
       show: true,
       key: "Jixun Code Input Dialog",
       compProps: {
@@ -42,7 +42,7 @@ export function hookListToolActions(listToolActions) {
     const result = listToolActions.apply(this, arguments);
     if (result?.[0]?.comp === "upload-button") {
       result.splice(1, 0, {
-        comp: "jixun-code-upload-button",
+        comp: "JixunCodeUploadButton",
         evt: "instant-code-upload",
         icon: "u-icon-upper-shelf",
         plugin: "code-upload@com.baidu.pan",

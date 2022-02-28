@@ -22,3 +22,7 @@ export const MK = {
   loaded: "l",
   exports: "exports",
 };
+
+export const EVENTS = {
+  SHOW_CODE_UPLOAD_DIALOG: "SHOW_CODE_UPLOAD_DIALOG",
+};
