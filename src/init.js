@@ -1,17 +1,17 @@
-require("./global.css");
+import "./global.css";
 
-const {
-  M: MODULE_IDS,
+import {
+  M as MODULE_IDS,
   ENTRY_ID,
   CHUNK_EARLY_HOOK,
-  R: REQUIRE,
-  MK: MODULE_KEYS,
+  R as REQUIRE,
+  MK as MODULE_KEYS,
   __default,
-} = require("./constants");
-const { waitModuleLoad, setWebpackRequire } = require("./utils/hookRequire");
-const { registerVue } = require("./external/vue");
-const { hookComponentInit } = require("./utils/initHooks");
-const { registerComponents } = require("./components");
+} from "./constants";
+import { waitModuleLoad, setWebpackRequire } from "./utils/hookRequire";
+import { registerVue } from "./external/vue";
+import { hookComponentInit } from "./utils/initHooks";
+import { registerComponents } from "./components";
 
 waitModuleLoad(MODULE_IDS.Vue, (module, require) => {
   const Vue = module.exports.default;
