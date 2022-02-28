@@ -8,16 +8,4 @@
 
 ### 当前进展
 
-作为 Vue 组件，成功注入到工具栏按钮。
-
-![秒传按钮](assets/instant-upload-btn.png)
-
-### v1.0
-
-- [ ] 「秒传」
-  - [ ] 对话框以及功能实现
-- [ ] 批量更名
-
-### v2.0
-
-- [ ] 特征码识别模块的 ID，而非固定。
+请在仓库讨论区追踪: https://github.com/jixunmoe/dupan-helper-v2/discussions/2
