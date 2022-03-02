@@ -1,5 +1,5 @@
 import test from "ava";
-import { BaiduUploadAPI } from "../upload";
+import { scrambleMD5 } from "../baiduMD5Scramble";
 
 const testCases = [
   ["", "\x00"],
@@ -17,7 +17,6 @@ const testCases = [
 
 for (const [from, to] of testCases) {
   test(`#scrambleMD5 "${from}" -> ${JSON.stringify(to)}`, (t) => {
-    const api = new BaiduUploadAPI();
-    t.is(to, api.scrambleMD5(from));
+    t.is(to, scrambleMD5(from));
   });
 }

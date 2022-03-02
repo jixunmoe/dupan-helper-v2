@@ -1,4 +1,4 @@
-interface RapidUploadResp {
+export interface RapidUploadResp {
   errno: number;
   request_id: number;
 
@@ -14,4 +14,11 @@ interface RapidUploadResp {
     ctime: number;
     path: string;
   };
+}
+
+export enum RAPID_UPLOAD_REPLACE {
+  FAILURE = 0,
+  DUPLICATE = 1,
+  // UNKNOWN_REPLACE_RULE = 2,
+  REPLACE = 3,
 }

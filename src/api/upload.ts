@@ -1,80 +1,57 @@
-import { baiduContext, BaiduYunData } from "../external/baidu";
+import { BaiduContext, baiduContext, BaiduYunData } from "../external/baidu";
+import { scrambleMD5 } from "../utils/baiduMD5Scramble";
+import { RapidUploadResp, RAPID_UPLOAD_REPLACE } from "./rapidupload";
 
 const URL_RAPID_UPLOAD = "/api/rapidupload";
 
-const reorderMD5 = (str: string): string => {
-  return str.slice(8, 16) + str.slice(0, 8) + str.slice(24) + str.slice(16, 24);
-};
+const DAYS_IN_SECONDS = 86400;
+const DAYS_90 = DAYS_IN_SECONDS * 90;
+const DAYS_180 = DAYS_IN_SECONDS * 180;
+const rand = (a: number, b: number) => (b - a) * Math.random();
+const generateMTime = () => (Date.now() / 1000 - rand(DAYS_90, DAYS_180)) | 0;
 
 interface RapidUploadOptions {
-  yunData: BaiduYunData;
-
-  file?: {
-    server_path: string;
-  };
-
-  path: string;
+  name: string;
   size: number;
   contentMD5: string;
   sliceMD5: string;
-  target_path: string;
+  replaceType: RAPID_UPLOAD_REPLACE;
 }
 
 export class BaiduUploadAPI {
-  async rapidUpload(
-    opts: RapidUploadOptions,
-    query: string
-  ): Promise<RapidUploadResp> {
-    const { ctx } = await baiduContext.get();
+  baidu?: BaiduContext;
 
-    let url = URL_RAPID_UPLOAD;
-    if (query) {
-      url += `?${query}&bdstoken=${opts.yunData.bdstoken}`;
-    }
-
-    const data = {
-      path: opts.path,
-      "content-length": opts.size,
-      "content-md5": this.scrambleMD5(opts.contentMD5),
-      "slice-md5": this.scrambleMD5(opts.sliceMD5),
-      target_path: opts?.file?.server_path,
-    };
-
-    return ctx.$http.request({
-      url: url,
-      method: "POST",
-      data: data,
+  constructor() {
+    baiduContext.get((baidu) => {
+      this.baidu = baidu;
     });
   }
 
-  scrambleMD5(hash: string) {
-    // 百度的实现就是如此，应该是写错了？
-    if (parseInt(hash) & Number(hash.length !== 32)) {
-      return hash;
+  async rapidUpload(opt: RapidUploadOptions): Promise<RapidUploadResp> {
+    if (!this.baidu) {
+      return Promise.reject("Baidu Context 尚未初始化");
     }
 
-    // 如果包含非法字符，不进行处理。
-    // 可能是防止二次调用？
-    if (/[^0-9a-f]/.test(hash)) {
-      return hash;
-    }
+    const { ctx } = this.baidu;
+    const { replaceType, name, sliceMD5, contentMD5, size } = opt;
+    const { bdstoken } = ctx.yunData;
+    const dirPath = ctx.currentPath;
+    const fullPath = dirPath + "/" + name;
 
-    let result = reorderMD5(hash)
-      .split("")
-      .map((c: string, i: number) => {
-        let byte = (parseInt(c, 16) ^ i) & 0x0f;
-        if (i === 9) {
-          return String.fromCharCode(byte + 0x67);
-        }
-        return byte.toString(16);
-      })
-      .join("");
-
-    // 百度的实现如此，补位 String.fromCharString(NaN) - 被转换为字符码 0 的字符串
-    if (result.length < 10) result += "\x00";
-
-    return result;
+    return ctx.$http.request({
+      url: `${URL_RAPID_UPLOAD}?rtype=${replaceType}&bdstoken=${bdstoken}`,
+      method: "POST",
+      data: {
+        path: fullPath,
+        "content-length": size,
+        "content-md5": scrambleMD5(contentMD5),
+        "slice-md5": scrambleMD5(sliceMD5),
+        target_path: dirPath,
+        local_mtime: generateMTime(),
+      },
+    });
   }
 }
 
-export default new BaiduUploadAPI();
+const baiduUploadAPI = new BaiduUploadAPI();
+export default baiduUploadAPI;
