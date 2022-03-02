@@ -61,7 +61,7 @@
 <script lang="ts">
 import Vue from "vue";
 
-export default <Partial<Vue>>{
+export default Vue.extend({
   data() {
     return {
       ondup: "newcopy",
@@ -71,7 +71,7 @@ export default <Partial<Vue>>{
   },
 
   methods: {
-    updateVisible: function (visible) {
+    updateVisible: function (visible: boolean) {
       if (!visible) {
         this.$emit("hide");
       }
@@ -79,7 +79,7 @@ export default <Partial<Vue>>{
 
     handleAddURL: function () {},
   },
-};
+});
 </script>
 
 <style lang="postcss">

@@ -8,7 +8,7 @@ import { bus } from "../EventBus";
 import { EVENTS } from "../constants";
 import JixunCodeUploadDialog from "./JixunCodeUploadDialog.vue";
 
-export default <Partial<Vue>>{
+export default Vue.extend({
   components: { JixunCodeUploadDialog },
   beforeDestroy: function () {
     bus.off(EVENTS.SHOW_CODE_UPLOAD_DIALOG, this.showCodeUploadDialog);
@@ -29,5 +29,5 @@ export default <Partial<Vue>>{
       this.show = true;
     },
   },
-};
+});
 </script>

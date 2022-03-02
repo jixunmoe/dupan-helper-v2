@@ -19,7 +19,7 @@ import Vue from "vue";
 import { EVENTS } from "../constants";
 import { bus } from "../EventBus";
 
-export default <Partial<Vue>>{
+export default Vue.extend({
   props: {
     conf: {
       type: Object,
@@ -31,7 +31,7 @@ export default <Partial<Vue>>{
       bus.emit(EVENTS.SHOW_CODE_UPLOAD_DIALOG);
     },
   },
-};
+});
 </script>
 
 <style lang="postcss">
