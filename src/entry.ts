@@ -6,12 +6,12 @@ import {
   CHUNK_EARLY_HOOK,
   __default,
 } from "./constants";
-import { waitModuleLoad, setWebpackRequire } from "./utils/hookRequire";
+import { waitModuleLoad, setWebpackRequire } from "./hooks/hookRequire";
 import { Vue as VueModule, VueShimType } from "./external/vue";
-import { hookComponentInit } from "./utils/initHooks";
+import { hookComponentInit } from "./hooks/initHooks";
 import { registerComponents } from "./components";
-import { hookModuleDefaultExport } from "./utils/webpackHooks";
-import { byKey, ClassItem, hookMakeClass } from "./utils/hookMakeClass";
+import { hookModuleDefaultExport } from "./hooks/webpackHooks";
+import { byKey, ClassItem, hookMakeClass } from "./hooks/hookMakeClass";
 import { BaiduContext, baiduContext } from "./external/baidu";
 import { WebpackModule, WebpackModuleExport, WebpackRequire } from "./webpack";
 
