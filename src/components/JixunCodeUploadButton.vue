@@ -14,11 +14,12 @@
   </a>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
 import { EVENTS } from "../constants";
 import { bus } from "../EventBus";
 
-export default {
+export default <Partial<Vue>>{
   props: {
     conf: {
       type: Object,

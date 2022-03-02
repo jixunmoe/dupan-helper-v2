@@ -58,8 +58,10 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from "vue";
+
+export default <Partial<Vue>>{
   data() {
     return {
       ondup: "newcopy",

@@ -2,12 +2,13 @@
   <jixun-code-upload-dialog v-if="show" v-on:hide="show = false" />
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
 import { bus } from "../EventBus";
 import { EVENTS } from "../constants";
 import JixunCodeUploadDialog from "./JixunCodeUploadDialog.vue";
 
-export default {
+export default <Partial<Vue>>{
   components: { JixunCodeUploadDialog },
   beforeDestroy: function () {
     bus.off(EVENTS.SHOW_CODE_UPLOAD_DIALOG, this.showCodeUploadDialog);
