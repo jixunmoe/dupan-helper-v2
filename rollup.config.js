@@ -1,3 +1,4 @@
+import typescript from "rollup-plugin-typescript2";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import { babel } from "@rollup/plugin-babel";
@@ -17,6 +18,11 @@ export default {
   },
   plugins: [
     vue(),
+    typescript({
+      // 编译时不进行检查。
+      // 而且 Vue 插件进行了魔改来适应用户脚本注入的情况。
+      check: false,
+    }),
     postcss({
       extensions: [".css", ".postcss"],
       inject: (cssVariableName) => `styleInject(${cssVariableName});`,
@@ -28,7 +34,6 @@ export default {
     }),
     babel({
       babelHelpers: "bundled",
-      extensions: [".js", ".ts"],
     }),
     commonjs(),
     resolve({

@@ -1,0 +1,83 @@
+diff --git a/node_modules/rollup-plugin-vue2/dist/rollup-plugin-vue2.common.js b/node_modules/rollup-plugin-vue2/dist/rollup-plugin-vue2.common.js
+index 2bdfe6d..3e9be5b 100644
+--- a/node_modules/rollup-plugin-vue2/dist/rollup-plugin-vue2.common.js
++++ b/node_modules/rollup-plugin-vue2/dist/rollup-plugin-vue2.common.js
+@@ -1,5 +1,7 @@
+ 'use strict';
+ 
++const TS_SUFFIX = '?component.ts';
++
+ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+ 
+ var rollupPluginutils = require('rollup-pluginutils');
+@@ -24,6 +26,10 @@ function vue2 (options) {
+       }
+     },
+     load: function load (id) {
++      if (id.endsWith(TS_SUFFIX)) {
++        return scripts[id];
++      }
++
+       if (id.indexOf('.vue.component.') !== -1) {
+         id = id.slice(0, id.lastIndexOf('.vue.component.') + 4);
+         return styles[id] || ''
+@@ -62,8 +68,22 @@ function vueTransform (code, id, scripts) {
+   var nodes = compiler.parseComponent(code);
+   var s = new MagicString(code);
+   var exportOffset = 0;
++  var isTypeScript = nodes.script?.lang === 'ts';
+   if (nodes.script) {
+-    if (nodes.script.src) {
++    if (isTypeScript) {
++      let compName = id.match(/([^\\/]+)$/)[1].replace(/\.vue$/i, '').replace(/[^a-zA-Z0-9]/, '');
++      if (/^\d/.test(compName)) {
++        compName = '_' + compName;
++      }
++      const tsId = id + TS_SUFFIX;
++      const render = compileTemplate(nodes.template, id);
++      scripts[tsId] = nodes.script.content.toString().replace('Vue.extend({', '({\n' + render);
++      scripts[id] = `
++      import ${compName} from ${JSON.stringify(tsId)};
++      export default ${compName};
++      `;
++      s.overwrite(0, code.length, scripts[id]);
++    } else if (nodes.script.src) {
+       var script = readSrc(id, nodes.script.src);
+       exportOffset = indexOfExport(script, 0);
+       if (exportOffset) {
+@@ -78,14 +98,14 @@ function vueTransform (code, id, scripts) {
+   }
+ 
+   // The script cannot be valid so let's overwrite it
+-  if (exportOffset < 15) {
++  if (!isTypeScript && exportOffset < 15) {
+     exportOffset = 16;
+     s.overwrite(0, 16, 'export default {');
+     s.overwrite(16, code.length, '\nstub: 1\n}');
+   }
+ 
+   // Precompile and inject Vue template
+-  if (nodes.template) {
++  if (!isTypeScript && nodes.template) {
+     scripts[id] = injectTemplate(s, nodes.template, exportOffset, id);
+   }
+ 
+@@ -146,6 +166,18 @@ function injectTemplate (s, node, offset, id) {
+   return renderFuncs
+ }
+ 
++function compileTemplate (node, id) {
++  var t = node.src ? readSrc(id, node.src) : node.content;
++
++  // Compile template
++  var compiled = compiler.compile(t);
++  var renderFuncs = '\nrender: ' + toFunction(compiled.render) + ',';
++  if (compiled.staticRenderFns.length > 0) {
++    renderFuncs += '\nstaticRenderFns: [' + compiled.staticRenderFns.map(toFunction).join(',') + '],';
++  }
++  return renderFuncs
++}
++
+ /**
+  * Wrap a piece of code in a function
+  *
