@@ -1,5 +1,9 @@
+type CallbackSig<T> = (value: T) => void;
+type GetInPromiseSig<T> = () => Promise<T>;
+type GetInCallbackSig<T> = (callback: CallbackSig<T>) => void;
+type GetValueSig<T> = GetInPromiseSig<T> & GetInCallbackSig<T>;
 export default class DelayedValue<T> {
-  private queue: ((value: T) => void)[] = [];
+  private queue: CallbackSig<T>[] = [];
   private value?: T;
 
   public setValue = (value: T): void => {
@@ -14,17 +18,31 @@ export default class DelayedValue<T> {
     return this.value;
   };
 
-  public get = (callback: (value: T) => void) => {
-    this.queue.push(callback);
-  };
+  public get isSet(): boolean {
+    return this.value !== undefined;
+  }
 
-  public getAsync = async (): Promise<T> => {
+  public get = ((callback?: CallbackSig<T>) => {
     if (this.value !== undefined) {
-      return this.value;
+      if (callback) {
+        return callback(this.value);
+      } else {
+        return Promise.resolve(this.value);
+      }
     }
 
+    if (callback) {
+      this.queue.push(callback);
+    } else {
+      return new Promise((resolve) => {
+        this.queue.push(resolve);
+      });
+    }
+  }) as GetValueSig<T>;
+
+  public getAsync = async (): Promise<T> => {
     return new Promise((resolve) => {
-      this.queue.push(resolve);
+      this.get(resolve);
     });
   };
 }

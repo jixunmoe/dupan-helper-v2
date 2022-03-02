@@ -3,7 +3,7 @@ import {
   WEBPACK_REQUIRE_KEYS,
   __default,
 } from "../constants";
-import { WebpackRequire } from "../webpack";
+import { WebpackModuleExport, WebpackRequire } from "../webpack";
 import { waitModuleLoad } from "./hookRequire";
 
 export function allowReExport(require: WebpackRequire): void {
@@ -23,13 +23,13 @@ export function allowReExport(require: WebpackRequire): void {
   };
 }
 
-export function hookModuleDefaultExport<T>(
+export function hookModuleDefaultExport<T extends Function>(
   moduleId: string,
   hookMethod: (orig: T) => T
 ) {
   waitModuleLoad.call(moduleId, (module, require) => {
     const originalExports = module[WEBPACK_MODULE_KEYS.EXPORTS];
-    const originalDefaultExport = originalExports[__default];
+    const originalDefaultExport = <T>originalExports[__default];
     const newExports = {};
     module[WEBPACK_MODULE_KEYS.EXPORTS] = newExports;
 

@@ -1,13 +1,15 @@
 import JixunCodeUploadButton from "./components/JixunCodeUploadButton.vue";
 import JixunCodeUploadContainer from "./components/JixunCodeUploadContainer.vue";
 import JixunCodeUploadDialog from "./components/JixunCodeUploadDialog.vue";
+import { VueShimType } from "./external/vue";
+import { WebpackRequire } from "./webpack";
 
 /**
  * Register available components.
- * @param {import('./external/vue').VueShimType} Vue
- * @param {import('./webpack').WebpackRequire} require
+ * @param Vue
+ * @param require
  */
-export function registerComponents(Vue, require) {
+export function registerComponents(Vue: VueShimType, require: WebpackRequire) {
   Vue.component("JixunCodeUploadButton", JixunCodeUploadButton);
   Vue.component("JixunCodeUploadContainer", JixunCodeUploadContainer);
   Vue.component("JixunCodeUploadDialog", JixunCodeUploadDialog);

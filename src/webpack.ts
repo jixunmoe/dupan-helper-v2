@@ -1,6 +1,6 @@
 import { WEBPACK_MODULE_KEYS, WEBPACK_REQUIRE_KEYS } from "./constants";
 
-export type WebpackModuleExport = Record<string, never>;
+export type WebpackModuleExport = Record<string, unknown>;
 
 export interface WebpackModule {
   [WEBPACK_MODULE_KEYS.MODULE_ID]: string;
@@ -10,7 +10,7 @@ export interface WebpackModule {
 }
 
 export interface WebpackRequire {
-  <T = never>(module: string): T;
+  <T = unknown>(module: string): T;
 
   [WEBPACK_REQUIRE_KEYS.CACHED_MODULES]: Record<string, WebpackModule>;
   [WEBPACK_REQUIRE_KEYS.EXPORT_ES6_MEMBER]<T>(

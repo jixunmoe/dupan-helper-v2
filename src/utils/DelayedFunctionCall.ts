@@ -1,32 +1,15 @@
 import { FunctionArguments, FunctionReturnValueType } from "../types/extension";
+import DelayedValue from "./DelayedValue";
 
 export default class DelayedFunctionCall<F extends Function> {
-  private queue: [
-    unknown,
-    FunctionArguments<F>,
-    (
-      value:
-        | FunctionReturnValueType<F>
-        | PromiseLike<FunctionReturnValueType<F>>
-    ) => void,
-    (reason?: any) => void
-  ][] = [];
-  private f?: F;
+  private value = new DelayedValue<F>();
 
   public setImpl = (f: F): void => {
-    this.f = f;
-    for (const [ctx, args, resolve, reject] of this.queue) {
-      try {
-        resolve(f.apply(ctx, args));
-      } catch (err) {
-        reject(err);
-      }
-    }
-    this.queue = [];
+    this.value.setValue(f);
   };
 
   public getImpl = (): F | void => {
-    return this.f;
+    return this.value.getValue();
   };
 
   public call = (
@@ -39,12 +22,19 @@ export default class DelayedFunctionCall<F extends Function> {
     ctx: unknown,
     ...args: FunctionArguments<F>
   ): Promise<FunctionReturnValueType<F>> => {
-    if (this.f) {
-      return this.f.apply(ctx, args);
+    const f = this.value.getValue();
+    if (f) {
+      return f.apply(ctx, args);
     }
 
     return new Promise((resolve, reject) => {
-      this.queue.push([ctx, args, resolve, reject]);
+      this.value.get((f) => {
+        try {
+          resolve(f.apply(ctx, args));
+        } catch (err) {
+          reject(err);
+        }
+      });
     });
   };
 }

@@ -9,7 +9,7 @@ import postcssUrl from "postcss-url";
 const userScript = require("./user-script/rollup-user-script");
 
 export default {
-  input: "src/script.js",
+  input: "src/entry.ts",
   output: {
     format: "cjs",
     file: "dist/baidu.user.js",

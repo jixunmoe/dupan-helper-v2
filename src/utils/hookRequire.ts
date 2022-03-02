@@ -4,7 +4,7 @@ import {
   WEBPACK_REQUIRE_KEYS,
 } from "../constants";
 import { WebpackModule, WebpackRequire } from "../webpack";
-import DelayedFunctionCall from "./delayedFunctionCall";
+import DelayedFunctionCall from "./DelayedFunctionCall";
 
 type WaitModuleLoadCB = (
   module: WebpackModule,

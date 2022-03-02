@@ -13,6 +13,7 @@ import { registerComponents } from "./components";
 import { hookModuleDefaultExport } from "./utils/webpackHooks";
 import { byKey, ClassItem, hookMakeClass } from "./utils/hookMakeClass";
 import { BaiduContext, baiduContext } from "./external/baidu";
+import { WebpackModule, WebpackModuleExport, WebpackRequire } from "./webpack";
 
 waitModuleLoad.call(WEBPACK_MODULE_ID.Vue, (module, require) => {
   const Vue = module.exports.default as VueShimType;
@@ -57,7 +58,11 @@ hookMakeClass((makeClass, ctr, p, s) => {
     /* 新百度网盘 */
   ],
   {
-    [ENTRY_ID]: function (module, exports, require) {
+    [ENTRY_ID]: function (
+      module: WebpackModule,
+      exports: WebpackModuleExport,
+      require: WebpackRequire
+    ) {
       setWebpackRequire(require);
     },
   },

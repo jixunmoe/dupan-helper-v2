@@ -25,7 +25,7 @@ export class BaiduUploadAPI {
     opts: RapidUploadOptions,
     query: string
   ): Promise<RapidUploadResp> {
-    const { ctx } = await baiduContext.getAsync();
+    const { ctx } = await baiduContext.get();
 
     let url = URL_RAPID_UPLOAD;
     if (query) {
@@ -47,7 +47,7 @@ export class BaiduUploadAPI {
     });
   }
 
-  scrambleMD5(hash) {
+  scrambleMD5(hash: string) {
     // 百度的实现就是如此，应该是写错了？
     if (parseInt(hash) & Number(hash.length !== 32)) {
       return hash;
