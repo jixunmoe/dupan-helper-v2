@@ -1,5 +1,4 @@
-import './init';
-import Component1 from './components/Component1.vue';
+import "./init";
 
 // alert(1);
 

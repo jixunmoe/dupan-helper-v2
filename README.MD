@@ -4,6 +4,15 @@
 
 可通过对 WebPack 的模块初始化函数 Hook 进行执行时代码注入。
 
+## 开发相关
+
+百度用到了 [Element-UI][eleme_ui] 库，但前缀从 `el-` 变成了 `u-`。
+
+如 [`<el-radio>`][el_radio] 在百度的框架内使用 `<u-radio>` 的方式引用即可。
+
+[eleme_ui]: https://element.eleme.io/
+[el_radio]: https://element.eleme.io/#/zh-CN/component/radio
+
 ## 开发目标
 
 ### 当前进展

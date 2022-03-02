@@ -10,27 +10,50 @@
       v-on:update:visible="updateVisible"
     >
       <div class="jx-dialog">
-        <p>
+        <section>
           <label>
-            <span>秒传链接，一行一个</span>
-            <textarea v-model="links"></textarea>
+            <span>秒传链接，一行一个：</span>
+            <u-input
+              type="textarea"
+              :rows="5"
+              placeholder="请输入内容"
+              v-model="links"
+            >
+            </u-input>
           </label>
+        </section>
+
+        <br />
+
+        <!-- 好像已经没了 -->
+        <p v-if="false">
+          <span>文件重复时：</span>
+          <u-radio-group v-model="ondup" size="small">
+            <u-radio-button label="newcopy">建立副本</u-radio-button>
+            <u-radio-button label="overwrite">覆盖文件</u-radio-button>
+          </u-radio-group>
         </p>
       </div>
 
-      <template v-slot:footer>
-        <div class="jx-align-right">
-          <u-button
-            v-on:click="handleAddURL"
-            size="medium"
-            round
-            nativeType="button"
-            type="primary"
-          >
-            确定
-          </u-button>
-        </div>
-      </template>
+      <div slot="footer" class="jx-align-right">
+        <u-button
+          @click="updateVisible(false)"
+          size="medium"
+          round
+          nativeType="button"
+        >
+          取消
+        </u-button>
+        <u-button
+          @click="handleAddURL"
+          size="medium"
+          round
+          nativeType="button"
+          type="primary"
+        >
+          确定
+        </u-button>
+      </div>
     </u-dialog>
   </div>
 </template>
@@ -39,6 +62,8 @@
 export default {
   data() {
     return {
+      ondup: "newcopy",
+      radioOverwrite: 1111,
       links: "",
     };
   },
@@ -49,6 +74,8 @@ export default {
         this.$emit("hide");
       }
     },
+
+    handleAddURL: function () {},
   },
 };
 </script>
@@ -62,6 +89,12 @@ export default {
     width: 100%;
     min-height: 10em;
     border: 1px solid #ccc;
+  }
+
+  label {
+    > span {
+      cursor: pointer;
+    }
   }
 }
 </style>

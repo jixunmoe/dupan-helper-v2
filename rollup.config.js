@@ -1,9 +1,10 @@
-import vue from "rollup-plugin-vue2";
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import { babel } from "@rollup/plugin-babel";
 
-import postcss from 'rollup-plugin-postcss';
-import postcssUrl from 'postcss-url';
+import vue from "rollup-plugin-vue2";
+import postcss from "rollup-plugin-postcss";
+import postcssUrl from "postcss-url";
 
 const userScript = require("./user-script/rollup-user-script");
 
@@ -16,16 +17,22 @@ export default {
   plugins: [
     vue(),
     postcss({
-      extensions: ['.css', '.postcss'],
+      extensions: [".css", ".postcss"],
       inject: (cssVariableName) => `styleInject(${cssVariableName});`,
       plugins: [
         postcssUrl({
-          url: 'inline',
+          url: "inline",
         }),
       ],
     }),
+    babel({
+      babelHelpers: "bundled",
+      extensions: [".js", ".ts"],
+    }),
     commonjs(),
-    resolve(),
+    resolve({
+      extensions: [".js", ".ts"],
+    }),
     userScript(false),
   ],
 };
