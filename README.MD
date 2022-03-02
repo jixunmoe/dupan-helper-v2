@@ -13,6 +13,20 @@
 [eleme_ui]: https://element.eleme.io/
 [el_radio]: https://element.eleme.io/#/zh-CN/component/radio
 
+### 构建
+
+```sh
+npm ci
+npm run build
+```
+
+### 测试
+
+```sh
+npm ci
+npm test
+```
+
 ## 开发目标
 
 ### 当前进展
