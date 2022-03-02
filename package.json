@@ -13,7 +13,7 @@
   },
   "ava": {
     "require": [
-      "@babel/register"
+      "./support/setup-test.js"
     ],
     "files": [
       "src/**/*.test.js"
