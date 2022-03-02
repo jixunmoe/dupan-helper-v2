@@ -1,18 +1,11 @@
 export default class DelayedValue<T> {
-  private queue: [
-    (value: T | PromiseLike<T>) => void,
-    (reason?: any) => void
-  ][] = [];
+  private queue: ((value: T) => void)[] = [];
   private value?: T;
 
   public setValue = (value: T): void => {
     this.value = value;
-    for (const [resolve, reject] of this.queue) {
-      try {
-        resolve(value);
-      } catch (err) {
-        reject(err);
-      }
+    for (const resolve of this.queue) {
+      resolve(value);
     }
     this.queue = [];
   };
@@ -22,12 +15,7 @@ export default class DelayedValue<T> {
   };
 
   public get = (callback: (value: T) => void) => {
-    this.queue.push([
-      callback,
-      (err) => {
-        console.error("could not get value: ", err);
-      },
-    ]);
+    this.queue.push(callback);
   };
 
   public getAsync = async (): Promise<T> => {
@@ -35,8 +23,8 @@ export default class DelayedValue<T> {
       return this.value;
     }
 
-    return new Promise((resolve, reject) => {
-      this.queue.push([resolve, reject]);
+    return new Promise((resolve) => {
+      this.queue.push(resolve);
     });
   };
 }
