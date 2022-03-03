@@ -1,4 +1,3 @@
-import { Component as VueComponent } from "vue";
 import DelayedValue from "../utils/DelayedValue";
 
 export interface VueComponentShim extends Record<string, unknown> {
@@ -9,7 +8,7 @@ export interface VueComponentShim extends Record<string, unknown> {
 }
 
 export interface VueShimType {
-  component(name: string, component: VueComponentShim | VueComponent): void;
+  component(name: string, component: VueComponentShim): void;
   config: Record<string, any>;
 }
 

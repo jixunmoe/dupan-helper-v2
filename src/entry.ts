@@ -6,6 +6,7 @@ import {
   CHUNK_EARLY_HOOK,
   __default,
 } from "./constants";
+import "./events";
 import { waitModuleLoad, setWebpackRequire } from "./hooks/hookRequire";
 import { Vue as VueModule, VueShimType } from "./external/vue";
 import { hookComponentInit } from "./hooks/initHooks";
