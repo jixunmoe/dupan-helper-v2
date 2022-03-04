@@ -1,12 +1,12 @@
 <template>
   <div class="nd-dialog-common">
     <el-dialog
-      class="u-dialog__wrapper nd-dialog-common-header"
       title="标准提取码"
+      class="u-dialog__wrapper nd-dialog-common-header"
       width="600px"
-      v-bind:lockScroll="false"
-      v-bind:visible="true"
-      v-bind:show="true"
+      :lockScroll="false"
+      :visible="true"
+      v-if="showForm"
       v-on:update:visible="updateVisible"
     >
       <div class="jx-dialog">
@@ -24,76 +24,47 @@
           </label>
         </section>
 
-        <br />
-
-        <!-- 好像已经没了 -->
-        <p v-if="false">
+        <p>
           <span>文件重复时：</span>
           <el-radio-group v-model="ondup" size="small">
-            <el-radio-button label="newcopy">建立副本</el-radio-button>
-            <el-radio-button label="overwrite">覆盖文件</el-radio-button>
+            <el-radio-button :label="RAPID_UPLOAD_REPLACE.DUPLICATE">
+              建立副本
+            </el-radio-button>
+            <el-radio-button :label="RAPID_UPLOAD_REPLACE.REPLACE">
+              覆盖文件
+            </el-radio-button>
           </el-radio-group>
         </p>
+
+        <jixun-du-parse-table :data="previewResults" :height="180" />
       </div>
 
-      <section class="jx-compact-form-items">
-        <el-table
-          :data="previewResults"
-          height="250"
-          :stripe="true"
-          size="small"
-        >
-          <el-table-column type="expand">
-            <template slot-scope="scope">
-              <el-form label-position="left" size="small">
-                <el-form-item label="文件名">
-                  <code>{{ scope.row.name }}</code>
-                </el-form-item>
-                <el-form-item label="文件大小">
-                  <code>{{ readableSize(scope.row.size) }}</code>
-                </el-form-item>
-                <el-form-item label="文件 MD5">
-                  <code>{{ scope.row.md5 }}</code>
-                </el-form-item>
-                <el-form-item label="首片 MD5">
-                  <code>{{ scope.row.md5s }}</code>
-                </el-form-item>
-              </el-form>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop="name" label="文件名">
-            <template slot-scope="scope">
-              <code>{{ scope.row.name }}</code>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop="size" label="大小" width="110">
-            <template slot-scope="scope">
-              <code>{{ readableSize(scope.row.size) }}</code>
-            </template>
-          </el-table-column>
-        </el-table>
-      </section>
-
       <div slot="footer" class="jx-align-right">
-        <el-button
-          @click="updateVisible(false)"
-          size="medium"
-          round
-          nativeType="button"
-        >
-          取消
-        </el-button>
-        <el-button
+        <jixun-button @click="updateVisible(false)">取消</jixun-button>
+        <jixun-button
+          primary
           @click="handleAddURL"
-          size="medium"
-          round
-          nativeType="button"
-          type="primary"
+          :disabled="previewResults.length === 0"
         >
           确定
-        </el-button>
+        </jixun-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="标准提取码 - 进行中"
+      class="u-dialog__wrapper nd-dialog-common-header"
+      width="600px"
+      v-if="showProgress"
+      :lockScroll="false"
+      :visible="true"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div class="jx-dialog">
+        <el-progress :percentage="10" status="success"></el-progress>
+        敬请期待…
       </div>
     </el-dialog>
   </div>
@@ -103,14 +74,16 @@
 import Vue from "vue";
 import { DuParser, DuParseEntry } from "../utils/DuParser";
 import debounce from "lodash/debounce";
-import readableSize from "../utils/readableSize";
-import { bus } from "../EventBus";
+import { RAPID_UPLOAD_REPLACE } from "../api/rapidupload";
 
 export default Vue.extend({
   data() {
     return {
+      RAPID_UPLOAD_REPLACE,
+      showForm: true,
+      showProgress: false,
       parser: new DuParser(),
-      ondup: "newcopy",
+      ondup: RAPID_UPLOAD_REPLACE.DUPLICATE,
       radioOverwrite: 1111,
       links: "",
       previewResults: <DuParseEntry[]>[],
@@ -122,7 +95,6 @@ export default Vue.extend({
   },
 
   methods: {
-    readableSize,
     updateVisible: function (visible: boolean) {
       if (!visible) {
         this.$emit("hide");
@@ -132,9 +104,10 @@ export default Vue.extend({
     handleAddURL: function () {
       const results = this.parseLinks();
       if (results.length > 0) {
-        bus.emit("add_rapid_upload", results);
+        // this.$emit("upload", results, this.ondup);
+        this.showForm = false;
+        this.showProgress = true;
       }
-      this.$emit("hide");
     },
 
     validateLinks: function () {
@@ -160,30 +133,13 @@ export default Vue.extend({
     border: 1px solid #ccc;
   }
 
+  p {
+    padding-top: 0.55em;
+  }
+
   label {
     > span {
       cursor: pointer;
-    }
-  }
-}
-
-.jx-compact-form-items {
-  .u-form-item {
-    margin-bottom: 0;
-  }
-  .u-form-item__label {
-    font-family: sans-serif;
-    width: 7em;
-    text-align: right;
-    user-select: none;
-
-    &,
-    & + div {
-      line-height: 1.25em;
-    }
-
-    + div {
-      overflow: hidden;
     }
   }
 }
