@@ -1,25 +1,25 @@
 export class EventBus {
-  handler = new Map<string, Set<Function>>();
+  handler = new Map<string | Symbol, Set<Function>>();
 
-  on(name: string, callback: Function) {
+  on(name: string | Symbol, callback: Function) {
     if (this.handler.has(name)) {
       this.handler.get(name)?.add(callback);
     } else {
       this.handler.set(name, new Set([callback]));
     }
   }
-  off(name: string, callback?: Function) {
+  off(name: string | Symbol, callback?: Function) {
     if (!callback) {
       this.handler.delete(name);
     } else if (this.handler.has(name)) {
       this.handler.get(name)?.delete(callback);
     }
   }
-  emit(name: string, data: any = {}) {
+  emit(name: string | Symbol, ...data: any[]) {
     const handlers = this.handler.get(name);
     if (handlers) {
       for (const callback of handlers) {
-        callback(data);
+        callback.apply(null, data);
       }
     }
   }
