@@ -1,6 +1,6 @@
 <template>
   <div class="nd-dialog-common">
-    <u-dialog
+    <el-dialog
       class="u-dialog__wrapper nd-dialog-common-header"
       title="标准提取码"
       width="600px"
@@ -13,14 +13,14 @@
         <section>
           <label>
             <span>秒传链接，一行一个：</span>
-            <u-input
+            <el-input
               type="textarea"
               :rows="5"
               placeholder="请输入内容"
               v-model="links"
               @input="validateLinks"
             >
-            </u-input>
+            </el-input>
           </label>
         </section>
 
@@ -29,63 +29,63 @@
         <!-- 好像已经没了 -->
         <p v-if="false">
           <span>文件重复时：</span>
-          <u-radio-group v-model="ondup" size="small">
-            <u-radio-button label="newcopy">建立副本</u-radio-button>
-            <u-radio-button label="overwrite">覆盖文件</u-radio-button>
-          </u-radio-group>
+          <el-radio-group v-model="ondup" size="small">
+            <el-radio-button label="newcopy">建立副本</el-radio-button>
+            <el-radio-button label="overwrite">覆盖文件</el-radio-button>
+          </el-radio-group>
         </p>
       </div>
 
       <section class="jx-compact-form-items">
-        <u-table
+        <el-table
           :data="previewResults"
           height="250"
           :stripe="true"
           size="small"
         >
-          <u-table-column type="expand">
+          <el-table-column type="expand">
             <template slot-scope="scope">
-              <u-form label-position="left" size="small">
-                <u-form-item label="文件名">
+              <el-form label-position="left" size="small">
+                <el-form-item label="文件名">
                   <code>{{ scope.row.name }}</code>
-                </u-form-item>
-                <u-form-item label="文件大小">
+                </el-form-item>
+                <el-form-item label="文件大小">
                   <code>{{ readableSize(scope.row.size) }}</code>
-                </u-form-item>
-                <u-form-item label="文件 MD5">
+                </el-form-item>
+                <el-form-item label="文件 MD5">
                   <code>{{ scope.row.md5 }}</code>
-                </u-form-item>
-                <u-form-item label="首片 MD5">
+                </el-form-item>
+                <el-form-item label="首片 MD5">
                   <code>{{ scope.row.md5s }}</code>
-                </u-form-item>
-              </u-form>
+                </el-form-item>
+              </el-form>
             </template>
-          </u-table-column>
+          </el-table-column>
 
-          <u-table-column prop="name" label="文件名">
+          <el-table-column prop="name" label="文件名">
             <template slot-scope="scope">
               <code>{{ scope.row.name }}</code>
             </template>
-          </u-table-column>
+          </el-table-column>
 
-          <u-table-column prop="size" label="大小" width="110">
+          <el-table-column prop="size" label="大小" width="110">
             <template slot-scope="scope">
               <code>{{ readableSize(scope.row.size) }}</code>
             </template>
-          </u-table-column>
-        </u-table>
+          </el-table-column>
+        </el-table>
       </section>
 
       <div slot="footer" class="jx-align-right">
-        <u-button
+        <el-button
           @click="updateVisible(false)"
           size="medium"
           round
           nativeType="button"
         >
           取消
-        </u-button>
-        <u-button
+        </el-button>
+        <el-button
           @click="handleAddURL"
           size="medium"
           round
@@ -93,9 +93,9 @@
           type="primary"
         >
           确定
-        </u-button>
+        </el-button>
       </div>
-    </u-dialog>
+    </el-dialog>
   </div>
 </template>
 

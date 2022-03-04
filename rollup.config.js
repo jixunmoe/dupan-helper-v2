@@ -1,3 +1,4 @@
+import replace from "@rollup/plugin-replace";
 import typescript from "rollup-plugin-typescript2";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
@@ -17,6 +18,13 @@ export default {
     file: "dist/baidu.user.js",
   },
   plugins: [
+    //
+    replace({
+      preventAssignment: false,
+      values: {
+        "_c('el-": "_c('u-",
+      },
+    }),
     vue(),
     typescript({
       // 编译时不进行检查。

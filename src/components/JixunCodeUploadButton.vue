@@ -1,6 +1,6 @@
 <template>
-  <a class="nd-upload-button upload-wrapper jx-upload-button">
-    <u-button
+  <a class="nd-upload-button upload-wrapper jx-upload-button-container">
+    <el-button
       v-on:click="handleClick"
       class="nd-file-list-toolbar-action-item"
       v-bind:class="{ 'is-has-icon': conf.icon }"
@@ -10,7 +10,7 @@
       v-bind:icon="'u-icon ' + conf.icon"
     >
       {{ conf.text }}
-    </u-button>
+    </el-button>
   </a>
 </template>
 
@@ -35,7 +35,7 @@ export default Vue.extend({
 </script>
 
 <style lang="postcss">
-a.jx-upload-button {
+a.jx-upload-button-container {
   margin-left: 0.5em;
 
   > button {
