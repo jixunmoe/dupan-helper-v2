@@ -74,7 +74,6 @@
 <script lang="ts">
 import Vue from "vue";
 import { DuParser, DuParseEntry } from "../utils/DuParser";
-import debounce from "lodash/debounce";
 import { RapidUploadResp, RAPID_UPLOAD_REPLACE } from "../api/rapidupload";
 import { bus } from "../EventBus";
 import { EVENTS } from "../constants";
@@ -96,10 +95,6 @@ export default Vue.extend({
       parsedLinks: <DuParseEntry[]>[],
       uploadResults: <VueUploadResult[]>[],
     };
-  },
-
-  created: function () {
-    this.validateLinks = debounce(this.validateLinks);
   },
 
   computed: {
