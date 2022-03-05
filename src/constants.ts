@@ -7,9 +7,9 @@ export const __default = "a";
 // module name
 export enum WEBPACK_MODULE_ID {
   RegisterComponent = "0083", // `@vitejs/plugin-vue` SFC 转换的代码
-  Globals = "49fe",
+  Globals = "49fe", // 一些常数以及一些预先定义好的请求代码函数
   Vue = "7231", // Search for: "Vue.js v2.6.14"
-  PolyfillMakeClass = "1586",
+  PolyfillMakeClass = "1586", // class 语法的 Polyfill 胶水
 }
 
 // require.x keys
