@@ -80,7 +80,6 @@ import { bus } from "../EventBus";
 import { EVENTS } from "../constants";
 import { VueUploadResult } from "../types/VueUploadResults";
 import JixunUploadResultTable from "./JixunUploadResultTable.vue";
-import { nanoid } from "nanoid/non-secure";
 
 export default Vue.extend({
   components: { JixunUploadResultTable },
