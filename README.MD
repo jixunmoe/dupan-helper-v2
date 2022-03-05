@@ -8,7 +8,10 @@
 
 百度用到了 [Element-UI][eleme_ui] 库，但前缀从 `el-` 变成了 `u-`。
 
-如 [`<el-radio>`][el_radio] 在百度的框架内使用 `<u-radio>` 的方式引用即可。
+如 [`<el-radio>`][el_radio] 在百度的框架内的定义为 `<u-radio>`。
+
+二次开发建议使用原始组件名。在 Rollup 配置文件进行了配置，会自动转换 `el-` 开头
+的元素名至 `u-`。
 
 [eleme_ui]: https://element.eleme.io/
 [el_radio]: https://element.eleme.io/#/zh-CN/component/radio
