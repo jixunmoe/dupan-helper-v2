@@ -15,8 +15,10 @@ import { hookModuleDefaultExport } from "./hooks/webpackHooks";
 import { byKey, ClassItem, hookMakeClass } from "./hooks/hookMakeClass";
 import { BaiduContext, baiduContext } from "./external/baidu";
 import { WebpackModule, WebpackModuleExport, WebpackRequire } from "./webpack";
+import { debug } from "./utils/log";
 
 waitModuleLoad.call(WEBPACK_MODULE_ID.Vue, (module, require) => {
+  debug("Vue loaded");
   const Vue = module.exports.default as VueShimType;
   Object.defineProperty(Vue.config, "devtools", {
     get() {
@@ -30,7 +32,10 @@ waitModuleLoad.call(WEBPACK_MODULE_ID.Vue, (module, require) => {
 
 hookModuleDefaultExport(
   WEBPACK_MODULE_ID.RegisterComponent,
-  (originalRegisterComponent) => hookComponentInit(originalRegisterComponent)
+  (originalRegisterComponent) => {
+    debug("RegisterComponent hooked");
+    return hookComponentInit(originalRegisterComponent);
+  }
 );
 
 hookMakeClass((makeClass, ctr, p, s) => {
@@ -45,6 +50,7 @@ hookMakeClass((makeClass, ctr, p, s) => {
           baiduContext.setValue(ctx);
           return getInstance(ctx);
         };
+        debug("class hooked w/ _sendFileInChunkStyle");
       }
     } catch (err) {
       console.error("hook make class failed", err);
@@ -64,6 +70,7 @@ hookMakeClass((makeClass, ctr, p, s) => {
       exports: WebpackModuleExport,
       require: WebpackRequire
     ) {
+      debug("Entry loaded");
       setWebpackRequire(require);
     },
   },

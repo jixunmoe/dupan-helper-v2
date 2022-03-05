@@ -1,4 +1,5 @@
 import { VueComponentShim } from "../external/vue";
+import { debug } from "../utils/log";
 
 interface WithPreviewPluginEnabled {
   previewPlugin: unknown[];
@@ -40,7 +41,7 @@ export function hookListToolActions(listToolActions: Function) {
 
 export function hookComponentInit(componentInit: Function) {
   return function (this: unknown, component: VueComponentShim) {
-    console.info("register component: ", component);
+    debug("register component: ", component);
 
     if (component?.computed?.listToolActions) {
       component.computed.listToolActions = hookListToolActions(
