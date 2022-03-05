@@ -23,6 +23,7 @@ export default {
       preventAssignment: false,
       values: {
         "_c('el-": "_c('u-",
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
       },
     }),
     vue(),
