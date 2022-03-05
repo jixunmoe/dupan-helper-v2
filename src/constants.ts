@@ -6,7 +6,8 @@ export const __default = "a";
 
 // module name
 export enum WEBPACK_MODULE_ID {
-  RegisterComponent = "0083",
+  RegisterComponent = "0083", // `@vitejs/plugin-vue` SFC 转换的代码
+  Globals = "49fe",
   Vue = "7231", // Search for: "Vue.js v2.6.14"
   PolyfillMakeClass = "1586",
 }
@@ -27,5 +28,4 @@ export enum WEBPACK_MODULE_KEYS {
 export const EVENTS = {
   SHOW_CODE_UPLOAD_DIALOG: Symbol("SHOW_CODE_UPLOAD_DIALOG"),
   ADD_RAPID_UPLOAD_TASKS: Symbol("ADD_RAPID_UPLOAD_TASKS"),
-  UPDATE_RAPID_UPLOAD_STATUS: Symbol("UPDATE_RAPID_UPLOAD_STATUS"),
 };

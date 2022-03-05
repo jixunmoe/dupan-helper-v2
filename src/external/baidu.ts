@@ -78,6 +78,48 @@ export interface BaiduYunData {
   servertime: number;
 }
 
+export interface BaiduUserInfo {
+  /**
+   * VIP 等级
+   */
+  vipLevel: number;
+
+  /**
+   * VIP 类型
+   */
+  vipType: number;
+
+  /**
+   * 用户识别码
+   */
+  uk: number;
+
+  /**
+   * 登陆用户名 (显示名)
+   */
+  username: string;
+
+  /**
+   * 头像图片地址
+   */
+  avatar: string;
+
+  /**
+   * 当前会话令牌
+   */
+  bdstoken: string;
+
+  /**
+   * 是企业版用户
+   */
+  isCertUser: boolean;
+
+  /**
+   * 未使用；标记已经取消订阅的企业版用户？
+   */
+  isCancelCertUser: boolean;
+}
+
 export interface BaiduInnerContext {
   $http: import("axios").Axios;
 
@@ -88,6 +130,7 @@ export interface BaiduInnerContext {
    */
   currentPath: string;
 
+  userInfo: BaiduUserInfo;
   yunData: BaiduYunData;
 }
 
@@ -95,4 +138,26 @@ export interface BaiduContext {
   ctx: BaiduInnerContext;
 }
 
+export enum BAIDU_GLOBALS_KEY {
+  SOME_API_URLS = "a",
+  ENTERPRISE_URLS = "b",
+  ERROR_MESSAGES = "c",
+}
+
+export type WithUserContextFunction = (user: BaiduUserInfo) => string;
+
+export interface BaiduGlobals {
+  [BAIDU_GLOBALS_KEY.SOME_API_URLS]: Record<string, string | void>;
+  [BAIDU_GLOBALS_KEY.ENTERPRISE_URLS]: Record<
+    "MID_ENTEPRISE" | "MID_ENTEPRISEV2",
+    string
+  >;
+  [BAIDU_GLOBALS_KEY.ERROR_MESSAGES]: Record<
+    string | number,
+    string | WithUserContextFunction | void
+  >;
+}
+
 export const baiduContext = new DelayedValue<BaiduContext>();
+
+export const baiduGlobals = new DelayedValue<BaiduGlobals>();

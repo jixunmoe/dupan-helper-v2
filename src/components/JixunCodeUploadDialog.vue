@@ -52,19 +52,20 @@
     </el-dialog>
 
     <el-dialog
-      title="标准提取码 - 进行中"
+      :title="`标准提取码 - ${rapidUploadFinished ? '完成' : '进行中'}`"
       class="u-dialog__wrapper nd-dialog-common-header"
       width="600px"
       v-if="showProgress"
+      v-on:update:visible="updateVisible"
       :lockScroll="false"
       :visible="true"
-      :show-close="false"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
+      :show-close="rapidUploadFinished"
+      :close-on-click-modal="rapidUploadFinished"
+      :close-on-press-escape="rapidUploadFinished"
     >
       <div class="jx-dialog">
-        <el-progress :percentage="10" status="success"></el-progress>
-        敬请期待…
+        <el-progress :percentage="progress" status="success"></el-progress>
+        <jixun-upload-result-table :data="uploadResults" :height="180" />
       </div>
     </el-dialog>
   </div>
@@ -74,9 +75,15 @@
 import Vue from "vue";
 import { DuParser, DuParseEntry } from "../utils/DuParser";
 import debounce from "lodash/debounce";
-import { RAPID_UPLOAD_REPLACE } from "../api/rapidupload";
+import { RapidUploadResp, RAPID_UPLOAD_REPLACE } from "../api/rapidupload";
+import { bus } from "../EventBus";
+import { EVENTS } from "../constants";
+import { VueUploadResult } from "../types/VueUploadResults";
+import JixunUploadResultTable from "./JixunUploadResultTable.vue";
+import { nanoid } from "nanoid/non-secure";
 
 export default Vue.extend({
+  components: { JixunUploadResultTable },
   data() {
     return {
       RAPID_UPLOAD_REPLACE,
@@ -87,6 +94,8 @@ export default Vue.extend({
       radioOverwrite: 1111,
       links: "",
       previewResults: <DuParseEntry[]>[],
+      parsedLinks: <DuParseEntry[]>[],
+      uploadResults: <VueUploadResult[]>[],
     };
   },
 
@@ -94,27 +103,66 @@ export default Vue.extend({
     this.validateLinks = debounce(this.validateLinks);
   },
 
+  computed: {
+    progress(): number {
+      if (this.rapidUploadFinished) {
+        return 100;
+      }
+
+      return (this.uploadResults.length / this.parsedLinks.length) * 100;
+    },
+
+    rapidUploadFinished(): boolean {
+      return this.uploadResults.length === this.parsedLinks.length;
+    },
+  },
+
   methods: {
-    updateVisible: function (visible: boolean) {
+    updateVisible(visible: boolean) {
       if (!visible) {
         this.$emit("hide");
       }
     },
 
-    handleAddURL: function () {
+    handleAddURL() {
       const results = this.parseLinks();
       if (results.length > 0) {
-        // this.$emit("upload", results, this.ondup);
         this.showForm = false;
+        this.resetProgress(results);
         this.showProgress = true;
+        this.beginUpload();
       }
     },
 
-    validateLinks: function () {
+    resetProgress(parsedLinks: DuParseEntry[]) {
+      this.uploadResults = [];
+      this.parsedLinks = parsedLinks;
+    },
+
+    beginUpload() {
+      bus.emit(
+        EVENTS.ADD_RAPID_UPLOAD_TASKS,
+        this.parsedLinks,
+        this.ondup,
+        this.updateProgress
+      );
+    },
+
+    updateProgress(entry: DuParseEntry, resp: RapidUploadResp) {
+      const success = resp.errno === 0;
+      this.uploadResults.unshift({
+        ...entry,
+        ...resp,
+        result: success ? "成功" : "失败",
+        resultType: success ? "success" : "danger",
+      });
+    },
+
+    validateLinks() {
       this.previewResults = this.parseLinks();
     },
 
-    parseLinks: function () {
+    parseLinks() {
       this.parser.parse(this.links);
       return this.parser.results;
     },

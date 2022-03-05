@@ -1,3 +1,20 @@
 .jx-align-right {
   text-align: right;
 }
+
+.jx-compact-form-items .u-form-item--small.u-form-item {
+  margin-bottom: 0;
+}
+
+.jx-compact-form-items .u-form-item--small .u-form-item__label {
+  font-family: sans-serif;
+  width: 7em;
+  text-align: right;
+  user-select: none;
+  line-height: 1.25em;
+}
+
+.jx-compact-form-items .u-form-item--small .u-form-item__content {
+  line-height: 1.25em;
+  overflow: hidden;
+}

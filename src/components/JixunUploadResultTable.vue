@@ -1,10 +1,22 @@
 <template>
   <section class="jx-compact-form-items">
-    <el-table :data="data" :height="height" :stripe="true" size="small">
+    <el-table
+      :data="data"
+      :height="height"
+      row-key="request_id"
+      :stripe="true"
+      size="small"
+    >
       <el-table-column type="expand">
         <template slot-scope="scope">
           <el-form label-position="left" size="small">
             <jixun-du-parse-entry-form-items :data="scope.row" />
+            <el-form-item label="上传结果">
+              <jixun-baidu-error :errno="scope.row.errno" />
+            </el-form-item>
+            <el-form-item label="提取码">
+              <pre>{{ toCode(scope.row) }}</pre>
+            </el-form-item>
           </el-form>
         </template>
       </el-table-column>
@@ -15,9 +27,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="size" label="大小" width="110">
+      <el-table-column prop="result" label="结果" width="80">
         <template slot-scope="scope">
-          <code>{{ readableSize(scope.row.size) }}</code>
+          <el-tag :type="scope.row.resultType" effect="dark">
+            {{ scope.row.result }}
+          </el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -27,23 +41,27 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import { DuParseEntry } from "../utils/DuParser";
+import { VueUploadResult } from "../types/VueUploadResults";
 import readableSize from "../utils/readableSize";
+import JixunBaiduError from "./JixunBaiduError.vue";
 import JixunDuParseEntryFormItems from "./JixunDuParseEntryFormItems.vue";
 
 export default Vue.extend({
-  components: { JixunDuParseEntryFormItems },
+  components: { JixunBaiduError, JixunDuParseEntryFormItems },
   props: {
     data: {
-      type: Array as PropType<DuParseEntry[]>,
-      required: true,
-    },
-    height: {
-      type: Number,
+      type: [] as PropType<VueUploadResult[]>,
       required: true,
     },
   },
   methods: {
     readableSize,
+    toCode(entry: DuParseEntry) {
+      const { name, size, md5, md5s } = entry;
+      return `${md5}#${md5s}#${size}#${name}`;
+    },
   },
 });
 </script>
+
+<style></style>

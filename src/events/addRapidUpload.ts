@@ -1,15 +1,24 @@
-import { RAPID_UPLOAD_REPLACE } from "../api/rapidupload";
+import { RapidUploadResp, RAPID_UPLOAD_REPLACE } from "../api/rapidupload";
 import baiduUploadAPI from "../api/upload";
 import { EVENTS } from "../constants";
 import { bus } from "../EventBus";
 import { baiduContext } from "../external/baidu";
 import { DuParseEntry } from "../utils/DuParser";
 
+type AddRapidUploadTask$UpdateProgress = (
+  entry: DuParseEntry,
+  resp: RapidUploadResp
+) => void;
+
 bus.on(
   EVENTS.ADD_RAPID_UPLOAD_TASKS,
-  async (items: DuParseEntry[], replaceType: RAPID_UPLOAD_REPLACE) => {
-    const count = items.length;
-    for (const [i, { md5, md5s, name, size }] of items.entries()) {
+  async (
+    items: DuParseEntry[],
+    replaceType: RAPID_UPLOAD_REPLACE,
+    updateProgress: AddRapidUploadTask$UpdateProgress
+  ) => {
+    for (const item of items) {
+      const { md5, md5s, name, size } = item;
       const resp = await baiduUploadAPI.rapidUpload({
         contentMD5: md5,
         sliceMD5: md5s,
@@ -17,7 +26,7 @@ bus.on(
         size,
         replaceType,
       });
-      bus.emit(EVENTS.UPDATE_RAPID_UPLOAD_STATUS, i, count, resp);
+      updateProgress(item, resp);
     }
 
     // 刷新所在目录

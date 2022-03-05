@@ -5,6 +5,7 @@ import {
   ENTRY_ID,
   CHUNK_EARLY_HOOK,
   __default,
+  WEBPACK_MODULE_KEYS,
 } from "./constants";
 import "./events";
 import { waitModuleLoad, setWebpackRequire } from "./hooks/hookRequire";
@@ -13,13 +14,13 @@ import { hookComponentInit } from "./hooks/initHooks";
 import { registerComponents } from "./components";
 import { hookModuleDefaultExport } from "./hooks/webpackHooks";
 import { byKey, ClassItem, hookMakeClass } from "./hooks/hookMakeClass";
-import { BaiduContext, baiduContext } from "./external/baidu";
+import { BaiduContext, baiduContext, baiduGlobals } from "./external/baidu";
 import { WebpackModule, WebpackModuleExport, WebpackRequire } from "./webpack";
 import { debug } from "./utils/log";
 
 waitModuleLoad.call(WEBPACK_MODULE_ID.Vue, (module, require) => {
   debug("Vue loaded");
-  const Vue = module.exports.default as VueShimType;
+  const Vue = module[WEBPACK_MODULE_KEYS.EXPORTS].default as VueShimType;
   Object.defineProperty(Vue.config, "devtools", {
     get() {
       return true;
@@ -38,6 +39,12 @@ hookModuleDefaultExport(
   }
 );
 
+waitModuleLoad.call(WEBPACK_MODULE_ID.Globals, (module, require) => {
+  const globals = module[WEBPACK_MODULE_KEYS.EXPORTS] as any;
+  baiduGlobals.setValue(globals);
+  debug("baiduGlobals init ok", globals);
+});
+
 hookMakeClass((makeClass, ctr, p, s) => {
   if (Array.isArray(p)) {
     try {
@@ -47,6 +54,7 @@ hookMakeClass((makeClass, ctr, p, s) => {
         );
         const getInstance = getInstanceMethod.value;
         getInstanceMethod.value = (ctx) => {
+          debug("baiduContext init ok", ctx);
           baiduContext.setValue(ctx);
           return getInstance(ctx);
         };
